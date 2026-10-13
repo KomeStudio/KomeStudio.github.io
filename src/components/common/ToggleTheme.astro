@@ -7,34 +7,38 @@ export interface Props {
   label?: string;
   class?: string;
   iconClass?: string;
-  /** Icon shown in light mode (it invites to switch to dark). */
-  iconName?: string;
-  /** Icon shown in dark mode. */
+  iconNameSystem?: string;
+  iconNameLight?: string;
   iconNameDark?: string;
 }
 
 const {
-  label = 'Toggle between Dark and Light mode',
+  label = 'System',
   class:
     className = 'text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center',
-  iconClass = 'w-6 h-6',
-  iconName = 'tabler:moon',
-  iconNameDark = 'tabler:sun',
+  iconClass = 'w-5 h-5',
+  iconNameSystem = 'tabler:device-desktop',
+  iconNameLight = 'tabler:sun',
+  iconNameDark = 'tabler:moon',
 } = Astro.props;
 ---
 
 {
   !(UI.theme && UI.theme.endsWith(':only')) && (
     <aw-theme-toggle>
-      <button type="button" class={className} aria-label={label} data-aw-toggle-color-scheme>
+      <button type="button" class={className} aria-label={label} title={label} data-aw-toggle-color-scheme>
         <span class:list={['relative block', iconClass]}>
           <Icon
-            name={iconName}
-            class="absolute inset-0 h-full w-full transition-[opacity,transform] duration-200 motion-reduce:transition-none [html.dark_&]:-rotate-90 [html.dark_&]:scale-0 [html.dark_&]:opacity-0"
+            name={iconNameSystem}
+            class="theme-icon-system h-full w-full transition-[opacity,transform] duration-200 motion-reduce:transition-none"
+          />
+          <Icon
+            name={iconNameLight}
+            class="theme-icon-light h-full w-full transition-[opacity,transform] duration-200 motion-reduce:transition-none"
           />
           <Icon
             name={iconNameDark}
-            class="absolute inset-0 h-full w-full rotate-90 scale-0 opacity-0 transition-[opacity,transform] duration-200 motion-reduce:transition-none [html.dark_&]:rotate-0 [html.dark_&]:scale-100 [html.dark_&]:opacity-100"
+            class="theme-icon-dark h-full w-full transition-[opacity,transform] duration-200 motion-reduce:transition-none"
           />
         </span>
       </button>
@@ -46,16 +50,75 @@ const {
   aw-theme-toggle {
     display: contents;
   }
+
+  /* Default / System mode */
+  .theme-icon-system {
+    display: block;
+  }
+  .theme-icon-light,
+  .theme-icon-dark {
+    display: none;
+  }
+
+  /* Light mode */
+  :global([data-theme-mode='light']) .theme-icon-system,
+  :global([data-theme-mode='light']) .theme-icon-dark {
+    display: none !important;
+  }
+  :global([data-theme-mode='light']) .theme-icon-light {
+    display: block !important;
+  }
+
+  /* Dark mode */
+  :global([data-theme-mode='dark']) .theme-icon-system,
+  :global([data-theme-mode='dark']) .theme-icon-light {
+    display: none !important;
+  }
+  :global([data-theme-mode='dark']) .theme-icon-dark {
+    display: block !important;
+  }
 </style>
 
 <script>
   class AwThemeToggle extends HTMLElement {
+    private labels: Record<string, string> = {
+      system: 'System',
+      light: 'Light',
+      dark: 'Dark',
+    };
+
     connectedCallback() {
-      this.querySelector('[data-aw-toggle-color-scheme]')?.addEventListener('click', () => {
-        const isDark = document.documentElement.classList.toggle('dark');
-        localStorage.theme = isDark ? 'dark' : 'light';
-        // Let the reveal-on-scroll controller drop its stagger delay so the
-        // theme change doesn't flicker mid-animation (see REF #643).
+      const button = this.querySelector<HTMLButtonElement>('[data-aw-toggle-color-scheme]');
+      if (!button) return;
+
+      const updateButtonLabel = (mode: string) => {
+        const text = this.labels[mode] || this.labels.system;
+        button.setAttribute('aria-label', text);
+        button.setAttribute('title', text);
+      };
+
+      const currentMode =
+        localStorage.theme === 'light' || localStorage.theme === 'dark' ? localStorage.theme : 'system';
+      updateButtonLabel(currentMode);
+
+      button.addEventListener('click', () => {
+        const current = localStorage.theme === 'light' || localStorage.theme === 'dark' ? localStorage.theme : 'system';
+        const modes = ['system', 'light', 'dark'];
+        const next = modes[(modes.indexOf(current) + 1) % modes.length];
+
+        if (next === 'system') {
+          localStorage.removeItem('theme');
+        } else {
+          localStorage.theme = next;
+        }
+
+        const isDark =
+          next === 'dark' || (next === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+        document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
+        document.documentElement.setAttribute('data-theme-mode', next);
+        updateButtonLabel(next);
+
         document.dispatchEvent(new CustomEvent('aw:theme-change'));
       });
     }

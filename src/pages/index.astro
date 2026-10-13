@@ -15,39 +15,160 @@ import Stats from '~/components/widgets/Stats.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import SocialProof from '~/components/widgets/SocialProof.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
-import { SITE, METADATA, I18N } from 'astrowind:config';
-import favIconSvg from '~/assets/favicons/favicon.svg';
 
 const metadata = {
-  title: 'AstroWind — Free template for creating websites with Astro + Tailwind CSS',
+  title: 'Kome Studio 😊 Cozy Games 🎮 Lovable Characters 🚀 KomeVerse',
+  description:
+    'Kome Studio creates cozy games, lovable characters, animated stories, and original worlds. Play, smile, belong. Discover the KomeVerse.',
   ignoreTitleTemplate: true,
 };
 
-// Structured data for the site and its publisher, built only from
-// `src/config.yaml` (`site.name`, `site.site`, `metadata.twitter.handle`), so
-// it is correct for any site made with the template. Blog posts add
-// BlogPosting on their own; the FAQs widget adds FAQPage.
-const organizationId = `${SITE?.site}/#organization`;
-const structuredData = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    '@id': `${SITE?.site}/#website`,
-    name: SITE?.name,
-    url: SITE?.site,
-    inLanguage: I18N?.language,
-    publisher: { '@id': organizationId },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    '@id': organizationId,
-    name: SITE?.name,
-    url: SITE?.site,
-    logo: new URL(favIconSvg.src, SITE?.site).toString(),
-    ...(METADATA?.twitter?.handle ? { sameAs: [`https://x.com/${METADATA.twitter.handle.replace(/^@/, '')}`] } : {}),
-  },
-];
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://komestudio.com/#organization',
+      name: 'Kome Studio',
+      legalName: 'Kome Studio',
+      url: 'https://komestudio.com/',
+      description:
+        'Kome Studio is an independent game studio creating cozy games, lovable characters, original intellectual property, and animated stories. It is building the KomeVerse, a playful universe of connected worlds and experiences designed to bring joy to players everywhere.',
+      logo: {
+        '@type': 'ImageObject',
+        '@id': 'https://komestudio.com/#logo',
+        url: 'https://komestudio.com/images/logo.svg',
+        contentUrl: 'https://komestudio.com/images/logo.svg',
+        width: 512,
+        height: 512,
+      },
+      image: 'https://komestudio.com/images/default.jpg',
+      sameAs: [
+        'https://www.youtube.com/@KomeStudios',
+        'https://www.facebook.com/KomeStudios',
+        'https://www.instagram.com/komestudios',
+        'https://www.tiktok.com/@komestudios',
+        'https://github.com/KomeStudio',
+        'https://www.twitch.tv/komestudio',
+        'https://x.com/KomeStudios',
+        'https://medium.com/komestudio',
+        'https://www.figma.com/@komestudio',
+        'https://dev.to/komestudio',
+        'https://huggingface.co/komestudio',
+        'https://www.reddit.com/r/KomeStudio/',
+        'https://patreon.com/KomeStudio',
+      ],
+      founder: {
+        '@id': 'https://komestudio.com/hoangdacviet/#person',
+      },
+      brand: {
+        '@id': 'https://komeverse.com/#brand',
+        '@type': 'Brand',
+        name: 'KomeVerse',
+        url: 'https://komeverse.com/',
+      },
+      email: 'admin@komestudio.com',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        email: 'admin@komestudio.com',
+        contactType: 'general inquiries',
+        availableLanguage: ['English', 'Vietnamese'],
+      },
+      knowsAbout: [
+        'Indie game development',
+        'Casual games',
+        'Mobile games',
+        'Cozy games',
+        'Character design',
+        'Animated storytelling',
+        'Original intellectual property',
+        'KomeVerse',
+      ],
+    },
+    {
+      '@type': 'Person',
+      '@id': 'https://komestudio.com/hoangdacviet/#person',
+      name: 'Hoàng Đắc Viết',
+      alternateName: ['Hoang Dac Viet', 'HoangDacViet', 'hoangdacviet', 'VnTim'],
+      url: 'https://komestudio.com/hoangdacviet/',
+      jobTitle: 'Founder',
+      worksFor: {
+        '@id': 'https://komestudio.com/#organization',
+      },
+      sameAs: [
+        'https://www.facebook.com/hoangdacviet',
+        'https://www.instagram.com/hoangdacviet',
+        'https://x.com/hoangdacviet',
+        'https://www.linkedin.com/in/hoangdacviet',
+        'https://www.youtube.com/@hoangdacviet',
+        'https://www.tiktok.com/@hoangdacviet',
+        'https://www.pinterest.com/hoangdacviet',
+        'https://www.threads.net/@hoangdacviet',
+        'https://www.behance.net/hoangdacviet',
+        'https://github.com/hoangdacviet',
+        'https://gitlab.com/hoangdacviet',
+        'https://dev.to/hoangdacviet',
+        'https://medium.com/@hoangdacviet',
+        'https://huggingface.co/hoangdacviet',
+        'https://www.producthunt.com/@hoangdacviet',
+        'https://about.me/hoangdacviet',
+        'https://en.gravatar.com/hoangdacviet',
+        'https://linktr.ee/hoangdacviet',
+        'https://profiles.wordpress.org/hoangdacviet',
+        'https://www.slideshare.net/vntimvntim',
+        'https://www.quora.com/profile/hoangdacviet',
+        'https://vntim.blogspot.com',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://komestudio.com/#website',
+      url: 'https://komestudio.com/',
+      name: 'Kome Studio',
+      alternateName: 'KomeStudio',
+      description:
+        'Official website of Kome Studio, an independent game studio building the KomeVerse through cozy games, lovable characters, and animated stories.',
+      publisher: {
+        '@id': 'https://komestudio.com/#organization',
+      },
+      inLanguage: 'en',
+    },
+    {
+      '@type': 'WebPage',
+      '@id': 'https://komestudio.com/#webpage',
+      url: 'https://komestudio.com/',
+      name: 'Kome Studio – Cozy Games, Lovable Characters & KomeVerse',
+      description:
+        'Kome Studio creates cozy games, lovable characters, animated stories, and original worlds. Play, smile, belong. Discover the KomeVerse.',
+      isPartOf: {
+        '@id': 'https://komestudio.com/#website',
+      },
+      about: {
+        '@id': 'https://komestudio.com/#organization',
+      },
+      primaryImageOfPage: {
+        '@id': 'https://komestudio.com/#logo',
+      },
+      inLanguage: 'en',
+      dateModified: '2026-10-14T00:00:00+07:00',
+      breadcrumb: {
+        '@id': 'https://komestudio.com/#breadcrumb',
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': 'https://komestudio.com/#breadcrumb',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: 'https://komestudio.com/',
+        },
+      ],
+    },
+  ],
+};
 ---
 
 <Layout metadata={metadata}>
@@ -59,8 +180,8 @@ const structuredData = [
     actions={[
       {
         variant: 'primary',
-        text: 'Get template',
-        href: 'https://github.com/arthelokyo/astrowind',
+        text: 'Download',
+        href: 'https://play.google.com/store/apps/dev?id=8710575431701290629',
         target: '_blank',
         icon: 'tabler:download',
       },
@@ -69,17 +190,20 @@ const structuredData = [
     image={{ src: '~/assets/images/hero-image.png', alt: 'AstroWind Hero Image' }}
   >
     <Fragment slot="title">
-      Free template for <span class="hidden xl:inline">creating websites with</span>
-      <span class="text-accent dark:text-white"> Astro v7</span> + Tailwind CSS
+      <span class="hidden xl:inline">Kome Studio 😊 Cozy Games 🎮 Lovable Characters 🚀 </span>
+      <span class="text-accent dark:text-white">KomeVerse</span>
     </Fragment>
 
     <Fragment slot="subtitle">
       <span class="hidden sm:inline">
-        <span class="font-semibold">AstroWind</span> is a free, customizable and production-ready template for Astro v7 +
-        Tailwind CSS v4.</span
+        <span class="font-semibold">Kome Studio</span> is an independent game studio creating cozy games, lovable characters,
+        original intellectual properties (IP), and animated stories.
+      </span>
+      <span class="block mb-1 sm:hidden font-bold text-blue-600"
+        >Building the KomeVerse, a playful universe of connected worlds and experiences designed to bring joy to players
+        everywhere.</span
       >
-      <span class="block mb-1 sm:hidden font-bold text-blue-600">AstroWind: Production-ready.</span>
-      Suitable for Startups, Small Business, SaaS websites, Professional Portfolios, Marketing websites, Landing Pages & Blogs.
+      Suitable for casual gaming, character-driven adventures, family-friendly entertainment, and creative digital experiences.
     </Fragment>
   </Hero>
 
@@ -94,7 +218,7 @@ const structuredData = [
         label: 'most starred Astro theme',
         icon: 'tabler:star-filled',
         color: 'text-amber-400',
-        href: 'https://github.com/arthelokyo/astrowind',
+        href: 'https://play.google.com/store/apps/dev?id=8710575431701290629',
       },
       { value: '100', label: 'Lighthouse score', icon: 'tabler:gauge', color: 'text-emerald-500' },
       { value: 'MIT', label: 'licensed, free to use', icon: 'tabler:license', color: 'text-sky-500' },
@@ -541,15 +665,15 @@ const structuredData = [
     actions={[
       {
         variant: 'primary',
-        text: 'Get template',
-        href: 'https://github.com/arthelokyo/astrowind',
+        text: 'Download',
+        href: 'https://play.google.com/store/apps/dev?id=8710575431701290629',
         target: '_blank',
         icon: 'tabler:download',
       },
     ]}
   >
     <Fragment slot="title">
-      Astro&nbsp;+&nbsp;<br class="block sm:hidden" /><span class="sm:whitespace-nowrap">Tailwind CSS</span>
+      Kome Studio&nbsp;+&nbsp;<br class="block sm:hidden" /><span class="sm:whitespace-nowrap">KomeVerse</span>
     </Fragment>
 
     <Fragment slot="subtitle">

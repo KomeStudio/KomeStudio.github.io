@@ -1,168 +1,119 @@
-import { getPermalink, getBlogPermalink, getAsset } from './utils/permalinks';
+import { getPermalink, getAsset } from './utils/permalinks';
 
 export const headerData = {
   links: [
     {
-      text: 'Homes',
-      links: [
-        {
-          text: 'SaaS',
-          href: getPermalink('/homes/saas'),
-        },
-        {
-          text: 'Startup',
-          href: getPermalink('/homes/startup'),
-        },
-        {
-          text: 'Mobile App',
-          href: getPermalink('/homes/mobile-app'),
-        },
-        {
-          text: 'Personal',
-          href: getPermalink('/homes/personal'),
-        },
-      ],
+      text: 'Games',
+      href: getPermalink('/games'),
     },
     {
-      text: 'Pages',
+      text: 'KomeVerse',
+      href: 'https://komeverse.com',
+      target: '_blank',
+    },
+    {
+      text: 'News',
+      href: getPermalink('/news'),
+    },
+    {
+      text: 'About',
       links: [
         {
-          text: 'Features (Anchor Link)',
-          href: getPermalink('/#features'),
-        },
-        {
-          text: 'Services',
-          href: getPermalink('/services'),
-        },
-        {
-          text: 'Pricing',
-          href: getPermalink('/pricing'),
-        },
-        {
-          text: 'About us',
+          text: 'About Us',
           href: getPermalink('/about'),
+        },
+        {
+          text: 'Parents',
+          href: getPermalink('/parents'),
+        },
+        {
+          text: 'Careers',
+          href: getPermalink('/careers'),
+        },
+        {
+          text: 'Support',
+          href: getPermalink('/support'),
         },
         {
           text: 'Contact',
           href: getPermalink('/contact'),
         },
         {
-          text: 'Terms',
-          href: getPermalink('/terms'),
-        },
-        {
-          text: 'Privacy policy',
-          href: getPermalink('/privacy'),
-        },
-      ],
-    },
-    {
-      text: 'Landing',
-      links: [
-        {
-          text: 'Lead Generation',
-          href: getPermalink('/landing/lead-generation'),
-        },
-        {
-          text: 'Long-form Sales',
-          href: getPermalink('/landing/sales'),
-        },
-        {
-          text: 'Click-Through',
-          href: getPermalink('/landing/click-through'),
-        },
-        {
-          text: 'Product Details (or Services)',
-          href: getPermalink('/landing/product'),
-        },
-        {
-          text: 'Coming Soon or Pre-Launch',
-          href: getPermalink('/landing/pre-launch'),
-        },
-        {
-          text: 'Subscription',
-          href: getPermalink('/landing/subscription'),
-        },
-      ],
-    },
-    {
-      text: 'Blog',
-      links: [
-        {
-          text: 'Blog List',
-          href: getBlogPermalink(),
-        },
-        {
-          text: 'Article',
-          href: getPermalink('get-started-website-with-astro-tailwind-css', 'post'),
-        },
-        {
-          text: 'Article (with MDX)',
-          href: getPermalink('markdown-elements-demo-post', 'post'),
-        },
-        {
-          text: 'Category Page',
-          href: getPermalink('tutorials', 'category'),
-        },
-        {
-          text: 'Tag Page',
-          href: getPermalink('astro', 'tag'),
+          text: 'Press',
+          href: getPermalink('/press'),
         },
       ],
     },
   ],
-  actions: [{ text: 'Download', href: 'https://github.com/arthelokyo/astrowind', target: '_blank' }],
+  actions: [
+    {
+      text: '🔴 Live',
+      href: 'https://www.youtube.com/@KomeStudios/live',
+      target: '_blank',
+    },
+  ],
 };
 
 export const footerData = {
   links: [
     {
-      title: 'Product',
+      title: 'Games',
       links: [
-        { text: 'Features', href: getPermalink('/#features') },
-        { text: 'Pricing', href: getPermalink('/pricing') },
-        { text: 'Services', href: getPermalink('/services') },
-        { text: 'Blog', href: getBlogPermalink() },
+        { text: 'All Games', href: getPermalink('/games') },
+        { text: 'SkyWing: Endless Flap', href: getPermalink('/games/skywing') },
+        { text: 'Run: Hero Dash', href: getPermalink('/games/run') },
+        { text: 'Mate', href: getPermalink('/games/mate') },
+        { text: 'Beat: Spotlight', href: getPermalink('/games/beat-spotlight') },
       ],
     },
     {
-      title: 'Demos',
+      title: 'KomeVerse',
       links: [
-        { text: 'SaaS', href: getPermalink('/homes/saas') },
-        { text: 'Startup', href: getPermalink('/homes/startup') },
-        { text: 'Mobile App', href: getPermalink('/homes/mobile-app') },
-        { text: 'Personal', href: getPermalink('/homes/personal') },
-        { text: 'Landing pages', href: getPermalink('/landing/lead-generation') },
+        { text: 'Overview', href: 'https://komeverse.com' },
+        { text: 'Characters', href: 'https://komeverse.com/characters' },
+        { text: 'World', href: 'https://komeverse.com/world' },
+        { text: 'Story & Lore', href: 'https://komeverse.com/story-lore' },
       ],
     },
     {
-      title: 'Resources',
+      title: 'About',
       links: [
-        { text: 'Documentation', href: 'https://github.com/arthelokyo/astrowind#readme' },
-        { text: 'Skills for AI agents', href: 'https://github.com/arthelokyo/astrowind/tree/main/.agents/skills' },
-        { text: 'Releases', href: 'https://github.com/arthelokyo/astrowind/releases' },
-        { text: 'Discussions', href: 'https://github.com/arthelokyo/astrowind/discussions' },
-      ],
-    },
-    {
-      title: 'Company',
-      links: [
-        { text: 'About', href: getPermalink('/about') },
+        { text: 'About Us', href: getPermalink('/about') },
+        { text: 'Parent Hub', href: getPermalink('/parents') },
+        { text: 'Careers', href: getPermalink('/careers') },
+        { text: 'Support', href: getPermalink('/support') },
         { text: 'Contact', href: getPermalink('/contact') },
-        { text: 'Report an issue', href: 'https://github.com/arthelokyo/astrowind/issues' },
-        { text: 'License', href: 'https://github.com/arthelokyo/astrowind/blob/main/LICENSE.md' },
+        { text: 'Press', href: getPermalink('/press') },
+      ],
+    },
+    {
+      title: 'News & Media',
+      links: [
+        { text: 'Studio News', href: getPermalink('/news') },
+        { text: 'Announcements', href: getPermalink('/news/announcements') },
+        { text: 'Releases', href: getPermalink('/news/releases') },
+        { text: 'Blog & Devlog', href: 'https://blog.komestudio.com' },
+        { text: 'YouTube Live 24/7', href: 'https://www.youtube.com/@KomeStudios' },
       ],
     },
   ],
   secondaryLinks: [
-    { text: 'Terms', href: getPermalink('/terms') },
     { text: 'Privacy Policy', href: getPermalink('/privacy') },
+    { text: 'Terms', href: getPermalink('/terms') },
+    { text: 'Parent Hub', href: getPermalink('/parents') },
   ],
   socialLinks: [
+    { ariaLabel: 'YouTube', icon: 'tabler:brand-youtube', href: 'https://www.youtube.com/@KomeStudios' },
+    { ariaLabel: 'Facebook', icon: 'tabler:brand-facebook', href: 'https://www.facebook.com/KomeStudios' },
+    { ariaLabel: 'Instagram', icon: 'tabler:brand-instagram', href: 'https://www.instagram.com/komestudios' },
+    { ariaLabel: 'TikTok', icon: 'tabler:brand-tiktok', href: 'https://www.tiktok.com/@komestudios' },
+    { ariaLabel: 'GitHub', icon: 'tabler:brand-github', href: 'https://github.com/KomeStudio' },
+    { ariaLabel: 'Reddit', icon: 'tabler:brand-reddit', href: 'https://www.reddit.com/r/KomeStudio' },
+    { ariaLabel: 'X', icon: 'tabler:brand-x', href: 'https://x.com/KomeStudios' },
+    { ariaLabel: 'Email', icon: 'tabler:mail', href: 'mailto:contact@komestudio.com' },
     { ariaLabel: 'RSS', icon: 'tabler:rss', href: getAsset('/rss.xml') },
-    { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/arthelokyo/astrowind' },
   ],
   footNote: `
-    Made by <a class="text-blue-600 underline dark:text-muted" href="https://arthelokyo.com"> Arthelokyo</a> · All rights reserved.
+    © ${new Date().getFullYear()} Kome Studio · All rights reserved.
   `,
 };

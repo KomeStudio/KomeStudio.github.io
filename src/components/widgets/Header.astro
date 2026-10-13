@@ -3,10 +3,11 @@ import { Icon } from 'astro-icon/components';
 import Logo from '~/components/Logo.astro';
 import ToggleTheme from '~/components/common/ToggleTheme.astro';
 import ToggleMenu from '~/components/common/ToggleMenu.astro';
+import GoogleTranslate from '~/components/common/GoogleTranslate.astro';
 import Button from '~/components/ui/Button.astro';
 
 import { getHomePermalink } from '~/utils/permalinks';
-import { trimSlash, getAsset } from '~/utils/permalinks';
+import { trimSlash } from '~/utils/permalinks';
 import type { CallToAction } from '~/types';
 
 interface Link {
@@ -14,6 +15,7 @@ interface Link {
   href?: string;
   ariaLabel?: string;
   icon?: string;
+  target?: string;
 }
 
 interface MenuLink extends Link {
@@ -29,6 +31,7 @@ export interface Props {
   isFullWidth?: boolean;
   showToggleTheme?: boolean;
   showRssFeed?: boolean;
+  showTranslate?: boolean;
   position?: string;
 }
 
@@ -41,6 +44,7 @@ const {
   isFullWidth = false,
   showToggleTheme = false,
   showRssFeed = false,
+  showTranslate = true,
   position = 'center',
 } = Astro.props;
 
@@ -57,7 +61,17 @@ const isActive = (href?: string) => typeof href === 'string' && `/${trimSlash(hr
 // with its own menu (the demo homes, the landing pages) would keep showing the
 // header of the page the visitor came from. Hash the props that shape the markup.
 const persistKey = `header-${Array.from(
-  JSON.stringify({ links, actions, isSticky, isDark, isFullWidth, showToggleTheme, showRssFeed, position })
+  JSON.stringify({
+    links,
+    actions,
+    isSticky,
+    isDark,
+    isFullWidth,
+    showToggleTheme,
+    showRssFeed,
+    showTranslate,
+    position,
+  })
 )
   .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 7)
   .toString(36)}`;
@@ -103,7 +117,7 @@ const persistKey = `header-${Array.from(
           class="flex flex-col lg:flex-row lg:self-center w-full lg:w-auto text-xl lg:text-[0.9375rem] tracking-[0.01rem] font-medium lg:justify-center"
         >
           {
-            links.map(({ text, href, links }) => (
+            links.map(({ text, href, links, target }) => (
               <li class={links?.length ? 'dropdown' : ''}>
                 {links?.length ? (
                   <>
@@ -118,7 +132,7 @@ const persistKey = `header-${Array.from(
                       />
                     </button>
                     <ul class="dropdown-menu lg:backdrop-blur-md dark:lg:bg-slate-900 dark:lg:border dark:lg:border-slate-700/50 rounded lg:absolute pl-4 lg:pl-0 lg:hidden font-medium lg:bg-white/90 lg:min-w-[200px] drop-shadow-xl">
-                      {links.map(({ text: text2, href: href2 }) => (
+                      {links.map(({ text: text2, href: href2, target: target2 }) => (
                         <li>
                           <a
                             class:list={[
@@ -126,6 +140,8 @@ const persistKey = `header-${Array.from(
                               { 'aw-link-active': isActive(href2) },
                             ]}
                             href={href2}
+                            target={target2}
+                            rel={target2 === '_blank' ? 'noopener noreferrer' : undefined}
                           >
                             {text2}
                           </a>
@@ -140,6 +156,8 @@ const persistKey = `header-${Array.from(
                       { 'aw-link-active': isActive(href) },
                     ]}
                     href={href}
+                    target={target}
+                    rel={target === '_blank' ? 'noopener noreferrer' : undefined}
                   >
                     {text}
                   </a>
@@ -156,19 +174,9 @@ const persistKey = `header-${Array.from(
         ]}
       >
         <div class="items-center flex justify-between w-full lg:w-auto">
-          <div class="flex">
+          <div class="flex items-center">
             {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 lg:w-5 lg:h-5 lg:inline-block" />}
-            {
-              showRssFeed && (
-                <a
-                  class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
-                  aria-label="RSS Feed"
-                  href={getAsset('/rss.xml')}
-                >
-                  <Icon name="tabler:rss" class="w-5 h-5" />
-                </a>
-              )
-            }
+            {showTranslate && <GoogleTranslate />}
           </div>
           {
             actions?.length ? (

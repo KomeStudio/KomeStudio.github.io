@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-60 -60 720 1020" width="360" height="510">
+  <title>KOME-K</title>
+  <path fill="#FFC90E" d="M300,0 L600,0 A600,600 0 0 1 0,600 L0,300 A300,300 0 0 0 300,0 Z"/>
+  <path fill="#4488FF" d="M300,900 L600,900 A600,600 0 0 0 0,300 L0,600 A300,300 0 0 1 300,900 Z"/>
+  <path fill="#F34040" d="M0,300 A600,600 0 0 1 396.86,450 A600,600 0 0 1 0,600 Z"/>
+</svg>

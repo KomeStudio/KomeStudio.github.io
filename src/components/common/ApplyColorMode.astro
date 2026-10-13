@@ -4,32 +4,43 @@ import { UI } from 'astrowind:config';
 
 <script is:inline define:vars={{ defaultTheme: UI.theme || 'system' }}>
   // Single source of truth for *applying* the color theme.
-  //
-  // This runs inline in the <head> so the `.dark` class is set before first
-  // paint (anti-FOUC — it must not be deferred/bundled). It also registers an
-  // `astro:after-swap` listener so the theme is re-applied on client-side
-  // navigations with <ClientRouter />. Toggling the theme is owned by the
-  // <aw-theme-toggle> custom element (see ToggleTheme.astro).
-  function applyTheme(theme) {
+  function applyTheme(theme, mode) {
     document.documentElement.classList[theme === 'dark' ? 'add' : 'remove']('dark');
+    document.documentElement.setAttribute('data-theme-mode', mode);
   }
 
-  function resolveTheme() {
+  function resolveMode() {
+    if (localStorage.theme === 'light' || localStorage.theme === 'dark') {
+      return localStorage.theme;
+    }
+    return 'system';
+  }
+
+  function resolveTheme(mode) {
     if ((defaultTheme && defaultTheme.endsWith(':only')) || (!localStorage.theme && defaultTheme !== 'system')) {
       return defaultTheme.replace(':only', '');
     }
-    if (
-      localStorage.theme === 'dark' ||
-      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      return 'dark';
+    if (mode === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-    return 'light';
+    return mode;
   }
 
-  applyTheme(resolveTheme());
+  const initialMode = resolveMode();
+  applyTheme(resolveTheme(initialMode), initialMode);
 
-  // `document` persists across view transitions, so this listener (registered
-  // once on first load) keeps re-applying the theme on every navigation.
-  document.addEventListener('astro:after-swap', () => applyTheme(resolveTheme()));
+  // Listen to OS system color-scheme changes when in system mode
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    const currentMode = resolveMode();
+    if (currentMode === 'system') {
+      applyTheme(resolveTheme('system'), 'system');
+      document.dispatchEvent(new CustomEvent('aw:theme-change'));
+    }
+  });
+
+  // Keep re-applying the theme on view transitions
+  document.addEventListener('astro:after-swap', () => {
+    const currentMode = resolveMode();
+    applyTheme(resolveTheme(currentMode), currentMode);
+  });
 </script>

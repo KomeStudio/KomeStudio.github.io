@@ -1,0 +1,98 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<div
+  class="relative inline-flex items-center justify-center text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus-within:ring-4 focus-within:ring-gray-200 dark:focus-within:ring-gray-700 rounded-lg text-sm p-2.5 cursor-pointer"
+  title="Google Translate"
+  aria-label="Google Translate"
+>
+  <Icon name="tabler:language" class="w-5 h-5 pointer-events-none" />
+  <div id="google_translate_element" class="google-translate-overlay"></div>
+</div>
+
+<script is:inline>
+  function googleTranslateElementInit() {
+    if (window.google && window.google.translate && window.google.translate.TranslateElement) {
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: 'en',
+          autoDisplay: false,
+        },
+        'google_translate_element'
+      );
+    }
+  }
+
+  // Load script if not already loaded
+  if (!document.getElementById('google-translate-script')) {
+    const script = document.createElement('script');
+    script.id = 'google-translate-script';
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    script.async = true;
+    document.head.appendChild(script);
+  }
+
+  // Re-run on Astro view transition swap if necessary
+  document.addEventListener('astro:page-load', () => {
+    const el = document.getElementById('google_translate_element');
+    if (el && !el.querySelector('.goog-te-combo') && window.google?.translate?.TranslateElement) {
+      googleTranslateElementInit();
+    }
+  });
+</script>
+
+<style is:global>
+  /* Prevent Google Translate banner from pushing page down */
+  body {
+    top: 0px !important;
+    position: static !important;
+  }
+  .goog-te-banner-frame,
+  .goog-te-banner-frame.skiptranslate,
+  iframe.skiptranslate {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  #goog-gt-tt,
+  .goog-te-balloon-frame {
+    display: none !important;
+  }
+  .goog-text-highlight {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Overlay select so only the icon is visible */
+  .google-translate-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+  }
+  .google-translate-overlay .goog-te-gadget {
+    width: 100% !important;
+    height: 100% !important;
+    font-size: 0px !important;
+    display: block !important;
+  }
+  .google-translate-overlay .goog-te-gadget > span,
+  .google-translate-overlay .goog-te-gadget .VIpgJd-ZVi9od-xl07Ob-lTBxed {
+    display: none !important;
+  }
+  .google-translate-overlay .goog-te-combo {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    opacity: 0 !important;
+    display: block !important;
+    border: none !important;
+    outline: none !important;
+  }
+</style>
