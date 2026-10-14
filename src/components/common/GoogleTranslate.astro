@@ -1,59 +1,164 @@
 ---
 import { Icon } from 'astro-icon/components';
+
+const LANGS: [string, string][] = [
+  ['vi', 'Tiếng Việt'],
+  ['en', 'English'],
+  ['zh-CN', '简体中文'],
+  ['ja', '日本語'],
+  ['ko', '한국어'],
+  ['fr', 'Français'],
+  ['de', 'Deutsch'],
+  ['es', 'Español'],
+  ['ru', 'Русский'],
+  ['th', 'ไทย'],
+  ['id', 'Bahasa Indonesia'],
+  ['ar', 'العربية'],
+  ['tl', 'Philippin '],
+  ['ms', 'Malaysia '],
+];
 ---
 
-<div
-  class="relative inline-flex items-center justify-center text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus-within:ring-4 focus-within:ring-gray-200 dark:focus-within:ring-gray-700 rounded-lg text-sm p-2.5 cursor-pointer"
-  title="Google Translate"
-  aria-label="Google Translate"
->
-  <Icon name="tabler:language" class="w-5 h-5 pointer-events-none" />
-  <div id="google_translate_element" class="google-translate-overlay"></div>
+<div class="relative inline-flex" id="gt-tool">
+  <button
+    type="button"
+    class="gt-toggle inline-flex items-center justify-center text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus-within:ring-4 focus-within:ring-gray-200 dark:focus-within:ring-gray-700 rounded-lg text-sm p-2.5 cursor-pointer"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-label="Translate"
+    title="Translate"
+  >
+    <Icon name="tabler:language" class="w-5 h-5 pointer-events-none" />
+  </button>
+
+  <!-- Popup chọn ngôn ngữ -->
+  <div
+    class="gt-pop hidden absolute right-0 top-full z-50 mt-2 w-44 rounded-lg border border-gray-200 bg-white p-1 text-sm shadow-lg dark:border-slate-700 dark:bg-slate-800"
+    role="menu"
+  >
+    <button
+      type="button"
+      class="gt-option flex w-full items-center rounded-md px-3 py-2 text-left text-muted hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-700"
+      data-lang=""
+    >
+      Ngôn ngữ gốc
+    </button>
+    <div class="my-1 border-t border-gray-200 dark:border-slate-700"></div>
+    {
+      LANGS.map(([code, name]) => (
+        <button
+          type="button"
+          class="gt-option flex w-full items-center rounded-md px-3 py-2 text-left text-muted hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-700"
+          data-lang={code}
+        >
+          {name}
+        </button>
+      ))
+    }
+  </div>
 </div>
 
 <script is:inline>
-  function googleTranslateElementInit() {
-    if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-      new window.google.translate.TranslateElement(
-        {
-          pageLanguage: 'en',
-          autoDisplay: false,
-        },
-        'google_translate_element'
-      );
-    }
-  }
+  (function () {
+    if (window.__gtInit) return; // tránh gắn listener nhiều lần khi Astro view-transitions swap trang
+    window.__gtInit = true;
 
-  // Load script if not already loaded
-  if (!document.getElementById('google-translate-script')) {
-    const script = document.createElement('script');
-    script.id = 'google-translate-script';
-    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-    script.async = true;
-    document.head.appendChild(script);
-  }
-
-  // Re-run on Astro view transition swap if necessary
-  document.addEventListener('astro:page-load', () => {
-    const el = document.getElementById('google_translate_element');
-    if (el && !el.querySelector('.goog-te-combo') && window.google?.translate?.TranslateElement) {
-      googleTranslateElementInit();
+    function pageLang() {
+      return (document.documentElement.lang || 'en').slice(0, 2).toLowerCase();
     }
-  });
+
+    /* Đọc / ghi ngôn ngữ dịch hiện tại qua cookie googtrans (chuẩn của Google Translate) */
+    function getTranslateLang() {
+      var m = document.cookie.match(/(?:^|;\s*)googtrans=\/[^/]*\/([^;]+)/);
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+    function setTranslateLang(code) {
+      var parts = location.hostname.split('.');
+      var expire = ';expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'googtrans=;path=/' + expire;
+      for (var i = 0; i < parts.length - 1; i++) {
+        document.cookie = 'googtrans=;path=/;domain=.' + parts.slice(i).join('.') + expire;
+      }
+      if (code) document.cookie = 'googtrans=/' + pageLang() + '/' + code + ';path=/';
+      location.reload();
+    }
+
+    /* Chỉ tải script + khởi tạo widget Google khi đang có ngôn ngữ dịch được chọn */
+    function loadGoogleTranslate() {
+      if (document.getElementById('google-translate-script')) return;
+      var holder = document.createElement('div');
+      holder.id = 'google_translate_element';
+      holder.hidden = true;
+      document.body.appendChild(holder);
+      window.googleTranslateElementInit = function () {
+        if (window.google && window.google.translate && window.google.translate.TranslateElement) {
+          new window.google.translate.TranslateElement(
+            { pageLanguage: pageLang(), autoDisplay: false },
+            'google_translate_element'
+          );
+        }
+      };
+      var script = document.createElement('script');
+      script.id = 'google-translate-script';
+      script.async = true;
+      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      document.head.appendChild(script);
+    }
+
+    /* Popup: mở/đóng, chọn ngôn ngữ, đóng khi click ngoài hoặc nhấn Esc */
+    function closeAllPopups() {
+      document.querySelectorAll('.gt-pop:not(.hidden)').forEach(function (pop) {
+        pop.classList.add('hidden');
+        var btn = pop.previousElementSibling;
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+    function markActive(tool) {
+      var current = getTranslateLang();
+      tool.querySelectorAll('.gt-option').forEach(function (opt) {
+        opt.classList.toggle('font-semibold', opt.dataset.lang === current);
+        opt.classList.toggle('text-primary', opt.dataset.lang === current);
+      });
+    }
+
+    document.addEventListener('click', function (e) {
+      var toggle = e.target.closest('.gt-toggle');
+      if (toggle) {
+        var tool = toggle.closest('#gt-tool');
+        var pop = tool.querySelector('.gt-pop');
+        var willOpen = pop.classList.contains('hidden');
+        closeAllPopups();
+        if (willOpen) {
+          markActive(tool);
+          pop.classList.remove('hidden');
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+        return;
+      }
+      var option = e.target.closest('.gt-option');
+      if (option) {
+        setTranslateLang(option.dataset.lang);
+        return;
+      }
+      if (!e.target.closest('.gt-pop')) closeAllPopups();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeAllPopups();
+    });
+
+    /* Tự tải widget nếu trang đang ở chế độ đã dịch (kể cả khi điều hướng qua view-transitions) */
+    function initOnLoad() {
+      if (getTranslateLang()) loadGoogleTranslate();
+    }
+    initOnLoad();
+    document.addEventListener('astro:page-load', initOnLoad);
+  })();
 </script>
 
 <style is:global>
-  /* Prevent Google Translate banner from pushing page down */
-  body {
-    top: 0px !important;
-    position: static !important;
-  }
+  /* Ẩn banner, tooltip và gạch chân mặc định của Google Translate */
   .goog-te-banner-frame,
-  .goog-te-banner-frame.skiptranslate,
-  iframe.skiptranslate {
-    display: none !important;
-    visibility: hidden !important;
-  }
+  iframe.skiptranslate,
   #goog-gt-tt,
   .goog-te-balloon-frame {
     display: none !important;
@@ -62,37 +167,10 @@ import { Icon } from 'astro-icon/components';
     background: none !important;
     box-shadow: none !important;
   }
-
-  /* Overlay select so only the icon is visible */
-  .google-translate-overlay {
-    position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    opacity: 0 !important;
-    overflow: hidden !important;
-    cursor: pointer !important;
-    z-index: 10 !important;
+  body[style*='top'] {
+    top: 0 !important;
   }
-  .google-translate-overlay .goog-te-gadget {
-    width: 100% !important;
-    height: 100% !important;
-    font-size: 0px !important;
-    display: block !important;
-  }
-  .google-translate-overlay .goog-te-gadget > span,
-  .google-translate-overlay .goog-te-gadget .VIpgJd-ZVi9od-xl07Ob-lTBxed {
+  #google_translate_element {
     display: none !important;
-  }
-  .google-translate-overlay .goog-te-combo {
-    width: 100% !important;
-    height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    cursor: pointer !important;
-    opacity: 0 !important;
-    display: block !important;
-    border: none !important;
-    outline: none !important;
   }
 </style>

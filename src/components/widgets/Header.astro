@@ -101,12 +101,29 @@ const persistKey = `header-${Array.from(
         },
       ]}
     >
-      <div class:list={[{ 'mr-auto rtl:mr-0 rtl:ml-auto': position === 'right' }, 'flex justify-between']}>
-        <a class="flex items-center" href={getHomePermalink()}>
+      <div class:list={[{ 'mr-auto rtl:mr-0 rtl:ml-auto': position === 'right' }, 'flex justify-between items-center w-full lg:w-auto']}>
+        <a class="flex items-center shrink min-w-0 mr-2" href={getHomePermalink()}>
           <Logo />
         </a>
-        <div class="flex items-center lg:hidden">
-          <ToggleMenu />
+        <div class="flex items-center gap-1 sm:gap-2 shrink-0 lg:hidden">
+          {
+            actions?.length ? (
+              actions.map((btnProps) => (
+                <Button
+                  {...btnProps}
+                  class="py-1 px-2.5 text-xs font-semibold shadow-none rounded-full whitespace-nowrap"
+                />
+              ))
+            ) : null
+          }
+          {showToggleTheme && (
+            <ToggleTheme
+              iconClass="w-5 h-5"
+              class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5 sm:p-2 inline-flex items-center"
+            />
+          )}
+          {showTranslate && <GoogleTranslate class="inline-flex" />}
+          <ToggleMenu class="flex flex-col h-9 w-9 sm:h-10 sm:w-10 rounded justify-center items-center cursor-pointer group" />
         </div>
       </div>
       <nav
@@ -173,10 +190,10 @@ const persistKey = `header-${Array.from(
           'hidden lg:self-center lg:flex items-center lg:mb-0 fixed w-full lg:w-auto lg:static justify-end left-0 rtl:left-auto rtl:right-0 bottom-0 p-3 lg:p-0 lg:justify-self-end',
         ]}
       >
-        <div class="items-center flex justify-between w-full lg:w-auto">
+        <div class="items-center hidden lg:flex justify-between w-full lg:w-auto">
           <div class="flex items-center">
             {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 lg:w-5 lg:h-5 lg:inline-block" />}
-            {showTranslate && <GoogleTranslate />}
+            {showTranslate && <GoogleTranslate class="hidden lg:inline-flex" />}
           </div>
           {
             actions?.length ? (
