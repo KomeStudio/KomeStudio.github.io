@@ -174,7 +174,16 @@ const structuredData = {
 ---
 
 <Layout metadata={metadata}>
-  <StructuredData slot="head" schema={structuredData} />
+  <Fragment slot="head">
+    <StructuredData schema={structuredData} />
+    <meta name="google-adsense-account" content="ca-pub-3065877099914437" />
+    <script
+      is:inline
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3065877099914437"
+      crossorigin="anonymous"
+    ></script>
+  </Fragment>
   <!-- Hero Widget ******************* -->
 
   <Hero
